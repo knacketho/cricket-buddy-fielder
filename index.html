@@ -1,617 +1,550 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cricket Fielding Planner</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-/* Custom styles for the field */
-.cricket-field {
-background: radial-gradient(circle, #4ade80 0%, #16a34a 80%, #15803d 100%);
-border: 4px solid white;
-box-shadow: inset 0 0 50px rgba(0,0,0,0.3);
-position: relative;
-overflow: hidden;
-touch-action: none;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Fielding Planner - Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the field */
+        .cricket-field {
+            background: radial-gradient(circle, #4ade80 0%, #16a34a 80%, #15803d 100%);
+            border: 4px solid white;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            touch-action: none;
+        }
 
-.inner-ring {
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-width: 60%;
-height: 55%;
-border: 2px dashed rgba(255, 255, 255, 0.6);
-border-radius: 50%;
-pointer-events: none;
-}
+        .inner-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 55%;
+            border: 2px dashed rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+        }
 
-.pitch {
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-width: 12%;
-height: 22%;
-background-color: #dcb183;
-border: 1px solid #a87e52;
-display: flex;
-flex-direction: column;
-justify-content: space-between;
-align-items: center;
-padding: 2px 0;
-pointer-events: none;
-}
+        .pitch {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12%;
+            height: 22%;
+            background-color: #dcb183;
+            border: 1px solid #a87e52;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 0;
+            pointer-events: none;
+        }
 
-.stumps {
-width: 40%;
-height: 4px;
-background-color: #333;
-display: flex;
-justify-content: space-between;
-}
-.stump {
-width: 2px;
-height: 100%;
-background-color: black;
-}
+        .stumps {
+            width: 40%;
+            height: 4px;
+            background-color: #333;
+            display: flex;
+            justify-content: space-between;
+        }
+        .stump {
+            width: 2px;
+            height: 100%;
+            background-color: black;
+        }
 
-.fielder {
-position: absolute;
-width: 24px;
-height: 24px;
-border-radius: 50%;
-border: 2px solid #333;
-transform: translate(-50%, -50%);
-cursor: pointer;
-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 9px;
-font-weight: bold;
-z-index: 10;
-user-select: none;
-}
+        .fielder {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #333;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            z-index: 10;
+            user-select: none;
+        }
 
-.fielder-empty {
-background-color: rgba(255, 255, 255, 0.9);
-color: #333;
-border-color: #94a3b8;
-}
-.fielder-empty:hover {
-background-color: white;
-z-index: 20;
-}
+        .fielder-empty {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border-color: #94a3b8;
+        }
+        .fielder-empty:hover {
+            background-color: white;
+            z-index: 20;
+        }
 
-.fielder-selected {
-background-color: #ef4444;
-color: white;
-border-color: white;
-transform: translate(-50%, -50%) scale(1.2);
-z-index: 20;
-}
+        .fielder-selected {
+            background-color: #ef4444;
+            color: white;
+            border-color: white;
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 20;
+        }
 
-.fielder-fixed {
-background-color: #2563eb;
-color: white;
-border-color: white;
-cursor: not-allowed;
-z-index: 20;
-}
-/* Dragging Styles */
-.fielder-draggable {
-cursor: grab;
-transition: transform 0.1s ease !important; /* Faster response for drag */
-}
-.fielder-draggable:active {
-cursor: grabbing;
-transform: translate(-50%, -50%) scale(1.2);
-z-index: 30;
-border-color: #fbbf24; /* Amber border when dragging */
-}
+        .fielder-fixed {
+            background-color: #2563eb;
+            color: white;
+            border-color: white;
+            cursor: not-allowed;
+            z-index: 20;
+        }
+        
+        .fielder-draggable {
+            cursor: grab;
+            transition: transform 0.1s ease !important; 
+        }
+        .fielder-draggable:active {
+            cursor: grabbing;
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 30;
+            border-color: #fbbf24;
+        }
 
-/* Utility class for vanishing unselected spots */
-.fielder-hidden {
-opacity: 0;
-pointer-events: none;
-transform: translate(-50%, -50%) scale(0.5); /* Shrink effect */
-}
+        .fielder-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
 
-.tooltip {
-position: absolute;
-top: -25px;
-left: 50%;
-transform: translateX(-50%);
-background: rgba(0,0,0,0.9);
-color: white;
-padding: 2px 6px;
-border-radius: 4px;
-font-size: 10px;
-white-space: nowrap;
-opacity: 0;
-pointer-events: none;
-transition: opacity 0.2s;
-z-index: 40;
-}
+        .tooltip {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 40;
+        }
 
-.fielder:hover .tooltip {
-opacity: 1;
-}
-.fielder-hidden .tooltip {
-display: none;
-}
-.fielder-draggable:active .tooltip {
-opacity: 0;
-}
+        .fielder:hover .tooltip {
+            opacity: 1;
+        }
 
-.crease {
-width: 100%;
-height: 1px;
-background-color: white;
-opacity: 0.8;
-}
+        .crease {
+            width: 100%;
+            height: 1px;
+            background-color: white;
+            opacity: 0.8;
+        }
 
-/* Scrollbar for table */
-.custom-scrollbar::-webkit-scrollbar {
-width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-background: #1e293b;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-background: #475569;
-border-radius: 3px;
-}
-.toggle-btn.active {
-background-color: #3b82f6;
-color: white;
-}
-.toggle-btn {
-background-color: #1e293b;
-color: #94a3b8;
-}
-</style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+        
+        .toggle-btn.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .toggle-btn {
+            background-color: #1e293b;
+            color: #94a3b8;
+        }
+
+        /* Viewport Transition */
+        #app-container {
+            transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Forced Mobile Layout */
+        .force-mobile .main-layout-row {
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+        .force-mobile .side-panel {
+            width: 100% !important;
+            margin-top: 1.5rem;
+        }
+        .force-mobile .header-row {
+            flex-direction: column !important;
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center p-4 font-sans">
+<body class="bg-slate-950 text-white min-h-screen flex flex-col items-center p-0 md:p-4 font-sans overflow-x-hidden">
 
-<!-- Header -->
-<header class="w-full max-w-5xl flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-<div class="flex flex-col gap-2">
-<h1 class="text-3xl font-bold text-green-400 flex items-center gap-2">
-<span>🏏</span> Fielding Captain
-</h1>
-<!-- RHB/LHB Toggle -->
-<div class="flex items-center gap-2 bg-slate-800 p-1 rounded-lg border border-slate-700 w-fit">
-<button onclick="setBatterHand('RHB')" id="btn-rhb" class="toggle-btn active px-3 py-1 text-xs font-bold rounded transition-colors">RHB</button>
-<button onclick="setBatterHand('LHB')" id="btn-lhb" class="toggle-btn px-3 py-1 text-xs font-bold rounded transition-colors">LHB</button>
-</div>
-</div>
-<div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex items-center gap-6 shadow-lg">
-<div class="text-center">
-<div class="text-xs text-slate-400 uppercase tracking-wider">Fielders</div>
-<div class="text-2xl font-bold transition-colors" id="playerCount">2</div>
-<div class="text-xs text-slate-500">/ 11 Players</div>
-</div>
-<div class="h-8 w-px bg-slate-600"></div>
-<div class="flex flex-col gap-1 text-[10px] md:text-xs">
-<div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-blue-600 border border-white"></div>
-<span>Fixed</span>
-</div>
-<div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-red-500 border border-white"></div>
-<span>Selected</span>
-</div>
-</div>
-</div>
-</header>
+    <!-- View Selector Bar -->
+    <div class="w-full bg-slate-900 border-b border-slate-800 p-2 mb-4 flex justify-center gap-2 sticky top-0 z-50 shadow-md">
+        <button onclick="changeView('mobile')" id="view-mobile" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H5z"/><path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+            <span class="text-xs font-bold hidden sm:inline">Mobile</span>
+        </button>
+        <button onclick="changeView('tablet')" id="view-tablet" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z"/><path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+            <span class="text-xs font-bold hidden sm:inline">Tablet</span>
+        </button>
+        <button onclick="changeView('pc')" id="view-pc" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition-colors border border-blue-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.5 3a.5.5 0 0 1 .5.5V11H2V3.5a.5.5 0 0 1 .5-.5h11zm-11-1A1.5 1.5 0 0 0 1 3.5V12h14V3.5A1.5 1.5 0 0 0 13.5 2h-11zM0 12.5h16a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 12.5z"/></svg>
+            <span class="text-xs font-bold hidden sm:inline">PC / Wide</span>
+        </button>
+    </div>
 
-<div class="w-full max-w-6xl flex flex-col md:flex-row gap-8 items-start justify-center">
-<!-- Left Column: Field -->
-<div class="flex flex-col items-center w-full max-w-lg">
-<main class="relative w-full aspect-[0.85] md:aspect-square shadow-2xl rounded-full overflow-hidden border-4 border-slate-800">
-<div class="cricket-field w-full h-full relative" id="field">
-<div class="inner-ring"></div>
-<!-- Pitch -->
-<div class="pitch">
-<div class="w-full flex flex-col items-center">
-<div class="crease mb-1"></div>
-<div class="stumps"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
-</div>
-<div class="w-full flex flex-col items-center">
-<div class="stumps"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
-<div class="crease mt-1"></div>
-</div>
-</div>
+    <!-- Main Wrapper with dynamic width -->
+    <div id="app-container" class="w-full max-w-6xl mx-auto px-4 pb-12">
+        
+        <!-- Header -->
+        <header class="header-row w-full flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div class="flex flex-col gap-2 items-center md:items-start">
+                <h1 class="text-3xl font-bold text-green-400 flex items-center gap-2">
+                    <span>🏏</span> Fielding Captain
+                </h1>
+                <div class="flex items-center gap-2 bg-slate-800 p-1 rounded-lg border border-slate-700 w-fit">
+                    <button onclick="setBatterHand('RHB')" id="btn-rhb" class="toggle-btn active px-3 py-1 text-xs font-bold rounded transition-colors">RHB</button>
+                    <button onclick="setBatterHand('LHB')" id="btn-lhb" class="toggle-btn px-3 py-1 text-xs font-bold rounded transition-colors">LHB</button>
+                </div>
+            </div>
+            
+            <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex items-center gap-6 shadow-lg">
+                <div class="text-center">
+                    <div class="text-xs text-slate-400 uppercase tracking-wider">Fielders</div>
+                    <div class="text-2xl font-bold transition-colors" id="playerCount">2</div>
+                    <div class="text-xs text-slate-500">/ 11 Players</div>
+                </div>
+                <div class="h-8 w-px bg-slate-600"></div>
+                <div class="flex flex-col gap-1 text-[10px] md:text-xs">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-blue-600 border border-white"></div>
+                        <span>Fixed</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500 border border-white"></div>
+                        <span>Selected</span>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-<!-- Labels -->
-<div class="absolute top-6 w-full text-center pointer-events-none opacity-40 text-[10px] font-bold uppercase tracking-widest text-white">Pavilion End</div>
-<div class="absolute bottom-6 w-full text-center pointer-events-none opacity-40 text-[10px] font-bold uppercase tracking-widest text-white">Sight Screen</div>
-</div>
-</main>
+        <div class="main-layout-row w-full flex flex-col md:flex-row gap-8 items-start justify-center">
+            
+            <!-- Field Column -->
+            <div class="flex flex-col items-center w-full max-w-lg">
+                <main class="relative w-full aspect-square shadow-2xl rounded-full overflow-hidden border-4 border-slate-800">
+                    <div class="cricket-field w-full h-full relative" id="field">
+                        <div class="inner-ring"></div>
+                        <div class="pitch">
+                            <div class="w-full flex flex-col items-center">
+                                <div class="crease mb-1"></div>
+                                <div class="stumps"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
+                            </div>
+                            <div class="w-full flex flex-col items-center">
+                                <div class="stumps"><div class="stump"></div><div class="stump"></div><div class="stump"></div></div>
+                                <div class="crease mt-1"></div>
+                            </div>
+                        </div>
+                        <div class="absolute top-6 w-full text-center pointer-events-none opacity-40 text-[10px] font-bold uppercase tracking-widest text-white">Pavilion End</div>
+                        <div class="absolute bottom-6 w-full text-center pointer-events-none opacity-40 text-[10px] font-bold uppercase tracking-widest text-white">Sight Screen</div>
+                    </div>
+                </main>
 
-<!-- Quick Actions -->
-<div class="mt-6 flex flex-wrap justify-center gap-3">
-<button onclick="resetField()" class="px-5 py-2 text-sm bg-slate-700 hover:bg-slate-600 rounded-full font-medium transition-colors border border-slate-600">
-Reset
-</button>
-<button onclick="standardField()" class="px-5 py-2 text-sm bg-green-600 hover:bg-green-500 rounded-full font-medium transition-colors shadow-lg shadow-green-900/30">
-Test Match Standard
-</button>
-<button onclick="odiField()" class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-500 rounded-full font-medium transition-colors shadow-lg shadow-blue-900/30">
-ODI Circle (Powerplay)
-</button>
-</div>
-</div>
+                <div class="mt-6 flex flex-wrap justify-center gap-3">
+                    <button onclick="resetField()" class="px-5 py-2 text-sm bg-slate-700 hover:bg-slate-600 rounded-full font-medium transition-colors border border-slate-600">Reset</button>
+                    <button onclick="standardField()" class="px-5 py-2 text-sm bg-green-600 hover:bg-green-500 rounded-full font-medium transition-colors shadow-lg">Test Standard</button>
+                    <button onclick="odiField()" class="px-5 py-2 text-sm bg-blue-600 hover:bg-blue-500 rounded-full font-medium transition-colors shadow-lg">ODI Powerplay</button>
+                </div>
+            </div>
 
-<!-- Right Column: Table -->
-<div class="w-full md:w-80 flex-shrink-0 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden flex flex-col h-[500px]">
-<div class="p-4 bg-slate-900 border-b border-slate-700 flex justify-between items-center">
-<h2 class="font-bold text-lg">Selected Positions</h2>
-<span id="batterIndicator" class="text-xs bg-blue-600 px-2 py-1 rounded text-white font-bold">Right Hand Bat</span>
-</div>
-<div class="overflow-y-auto custom-scrollbar flex-1 p-2">
-<table class="w-full text-sm text-left">
-<thead class="text-xs text-slate-400 uppercase bg-slate-800 sticky top-0">
-<tr>
-<th class="px-3 py-2">Pos</th>
-<th class="px-3 py-2 text-right">Side</th>
-</tr>
-</thead>
-<tbody id="positionTableBody" class="divide-y divide-slate-700">
-<!-- Rows injected by JS -->
-</tbody>
-</table>
-<div id="emptyState" class="text-center p-8 text-slate-500 text-sm italic">
-No fielders selected besides WK & Bowler.
-</div>
-</div>
-<div class="p-3 bg-slate-900 border-t border-slate-700 text-xs text-center text-slate-500">
-Total on field: <span id="footerCount">0</span>
-</div>
-</div>
+            <!-- Table Column -->
+            <div class="side-panel w-full md:w-80 flex-shrink-0 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden flex flex-col h-[500px]">
+                <div class="p-4 bg-slate-900 border-b border-slate-700 flex justify-between items-center">
+                    <h2 class="font-bold text-lg">Positions</h2>
+                    <span id="batterIndicator" class="text-[10px] bg-blue-600 px-2 py-1 rounded text-white font-bold">Right Hand Bat</span>
+                </div>
+                <div class="overflow-y-auto custom-scrollbar flex-1 p-2">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-slate-400 uppercase bg-slate-800 sticky top-0">
+                            <tr>
+                                <th class="px-3 py-2">Pos</th>
+                                <th class="px-3 py-2 text-right">Side</th>
+                            </tr>
+                        </thead>
+                        <tbody id="positionTableBody" class="divide-y divide-slate-700"></tbody>
+                    </table>
+                    <div id="emptyState" class="text-center p-8 text-slate-500 text-sm italic">No fielders selected.</div>
+                </div>
+                <div class="p-3 bg-slate-900 border-t border-slate-700 text-xs text-center text-slate-500">
+                    Total on field: <span id="footerCount">0</span>
+                </div>
+            </div>
 
-</div>
+        </div>
+    </div>
 
-<script>
-// --- Configuration ---
-// Coordinates defined for RIGHT HAND BAT at TOP (View from behind Bowler/High Cam)
-// Off side (RHB) is LEFT ( < 50% Left)
-// Leg Side (RHB) is RIGHT ( > 50% Left)
-// Initial Dynamic Position States
-let wkPositionState = { top: 24, left: 50 };
-let bwlPositionState = { top: 62, left: 55 }; // Default Over the wicket for RH Bowler
-let isRightHanded = true;
+    <script>
+        // --- View Switching Logic ---
+        function changeView(device) {
+            const container = document.getElementById('app-container');
+            const btns = {
+                mobile: document.getElementById('view-mobile'),
+                tablet: document.getElementById('view-tablet'),
+                pc: document.getElementById('view-pc')
+            };
 
-const positions = [
-// --- FIXED (BUT DRAGGABLE) ---
-{ id: 'wk', name: 'Wicket Keeper', fixed: true, short: 'WK', side: 'Central' },
-{ id: 'bwl', name: 'Bowler', fixed: true, short: 'BWL', side: 'Central' },
+            // Reset classes
+            container.style.maxWidth = "";
+            container.classList.remove('force-mobile');
+            Object.values(btns).forEach(b => {
+                b.classList.remove('bg-blue-600', 'border-blue-400');
+                b.classList.add('bg-slate-800', 'border-slate-700');
+            });
 
-// --- CLOSE IN (CATCHING) ---
-{ id: 'slip1', name: '1st Slip', top: 24, left: 46, short: '1', side: 'Off' },
-{ id: 'slip2', name: '2nd Slip', top: 25, left: 42, short: '2', side: 'Off' },
-{ id: 'slip3', name: '3rd Slip', top: 27, left: 38, short: '3', side: 'Off' },
-{ id: 'slip4', name: '4th Slip', top: 29, left: 35, short: '4', side: 'Off' },
-{ id: 'gully', name: 'Gully', top: 32, left: 32, short: 'G', side: 'Off' },
-{ id: 'fly_slip', name: 'Fly Slip', top: 30, left: 25, short: 'FS', side: 'Off' },
-{ id: 'leg_slip', name: 'Leg Slip', top: 24, left: 54, short: 'LS', side: 'Leg' },
-{ id: 'leg_gully', name: 'Leg Gully', top: 28, left: 58, short: 'LG', side: 'Leg' },
-{ id: 'silly_pt', name: 'Silly Point', top: 32, left: 42, short: 'SP', side: 'Off' },
-{ id: 'short_leg', name: 'Short Leg', top: 32, left: 58, short: 'SL', side: 'Leg' },
-{ id: 's_mid_off', name: 'Short Mid Off', top: 55, left: 45, short: 'SMO', side: 'Off' },
-{ id: 's_mid_on', name: 'Short Mid On', top: 55, left: 55, short: 'SMI', side: 'Leg' },
+            // Set active
+            btns[device].classList.remove('bg-slate-800', 'border-slate-700');
+            btns[device].classList.add('bg-blue-600', 'border-blue-400');
 
-// --- INNER CIRCLE ---
-{ id: 'pt', name: 'Point', top: 42, left: 25, short: 'Pt', side: 'Off' },
-{ id: 'b_pt', name: 'Backward Point', top: 35, left: 28, short: 'BP', side: 'Off' },
-{ id: 'cov', name: 'Cover', top: 55, left: 28, short: 'Cov', side: 'Off' },
-{ id: 'x_cov', name: 'Extra Cover', top: 65, left: 35, short: 'XC', side: 'Off' },
-{ id: 'mid_off', name: 'Mid Off', top: 72, left: 42, short: 'MO', side: 'Off' },
-{ id: 'mid_on', name: 'Mid On', top: 72, left: 58, short: 'MI', side: 'Leg' },
-{ id: 'mid_wkt', name: 'Mid Wicket', top: 60, left: 70, short: 'MW', side: 'Leg' },
-{ id: 's_mid_wkt', name: 'Short Mid Wicket', top: 50, left: 65, short: 'SMW', side: 'Leg' },
-{ id: 'sq_leg', name: 'Square Leg', top: 42, left: 75, short: 'SqL', side: 'Leg' },
-{ id: 'b_sq_leg', name: 'Backward Square Leg', top: 35, left: 72, short: 'BSL', side: 'Leg' },
-{ id: 'fine_leg', name: 'Fine Leg', top: 25, left: 65, short: 'FL', side: 'Leg' },
+            if (device === 'mobile') {
+                container.style.maxWidth = "400px";
+                container.classList.add('force-mobile');
+            } else if (device === 'tablet') {
+                container.style.maxWidth = "800px";
+            } else {
+                container.style.maxWidth = "1152px"; // max-w-6xl
+            }
+            
+            // Re-render to ensure any layout-dependent calcs are fresh
+            setTimeout(renderField, 300);
+        }
 
-// --- DEEP FIELD ---
-{ id: 'third_man', name: 'Third Man', top: 18, left: 22, short: '3M', side: 'Off' },
-{ id: 'deep_pt', name: 'Deep Point', top: 42, left: 12, short: 'DP', side: 'Off' },
-{ id: 'deep_cov', name: 'Deep Cover', top: 60, left: 12, short: 'DC', side: 'Off' },
-{ id: 'deep_x_cov', name: 'Deep Extra Cover', top: 75, left: 25, short: 'DXC', side: 'Off' },
-{ id: 'long_off', name: 'Long Off', top: 85, left: 42, short: 'LOf', side: 'Off' },
-{ id: 'long_on', name: 'Long On', top: 85, left: 58, short: 'LOn', side: 'Leg' },
-{ id: 'cow', name: 'Cow Corner', top: 75, left: 80, short: 'Cow', side: 'Leg' },
-{ id: 'deep_mid_wkt', name: 'Deep Mid Wicket', top: 65, left: 85, short: 'DMW', side: 'Leg' },
-{ id: 'deep_sq_leg', name: 'Deep Square Leg', top: 42, left: 88, short: 'DSL', side: 'Leg' },
-{ id: 'deep_fine_leg', name: 'Deep Fine Leg', top: 18, left: 78, short: 'DFL', side: 'Leg' },
-{ id: 'long_stop', name: 'Long Stop', top: 8, left: 50, short: 'LSt', side: 'Central' },
-// --- STRAIGHT ---
-{ id: 'str_hit', name: 'Straight Hit', top: 92, left: 50, short: 'Str', side: 'Central' }
-];
+        // --- Data & Positions ---
+        let wkPositionState = { top: 24, left: 50 };
+        let bwlPositionState = { top: 62, left: 55 };
+        let isRightHanded = true;
 
-// --- State Management ---
-const selectedFielders = new Set(['wk', 'bwl']);
-const fieldContainer = document.getElementById('field');
-const playerCountDisplay = document.getElementById('playerCount');
-const footerCountDisplay = document.getElementById('footerCount');
-const tableBody = document.getElementById('positionTableBody');
-const emptyState = document.getElementById('emptyState');
-const batterIndicator = document.getElementById('batterIndicator');
+        const positions = [
+            { id: 'wk', name: 'Wicket Keeper', fixed: true, short: 'WK', side: 'Central' },
+            { id: 'bwl', name: 'Bowler', fixed: true, short: 'BWL', side: 'Central' },
+            { id: 'slip1', name: '1st Slip', top: 24, left: 46, short: '1', side: 'Off' },
+            { id: 'slip2', name: '2nd Slip', top: 25, left: 42, short: '2', side: 'Off' },
+            { id: 'slip3', name: '3rd Slip', top: 27, left: 38, short: '3', side: 'Off' },
+            { id: 'slip4', name: '4th Slip', top: 29, left: 35, short: '4', side: 'Off' },
+            { id: 'gully', name: 'Gully', top: 32, left: 32, short: 'G', side: 'Off' },
+            { id: 'fly_slip', name: 'Fly Slip', top: 30, left: 25, short: 'FS', side: 'Off' },
+            { id: 'leg_slip', name: 'Leg Slip', top: 24, left: 54, short: 'LS', side: 'Leg' },
+            { id: 'leg_gully', name: 'Leg Gully', top: 28, left: 58, short: 'LG', side: 'Leg' },
+            { id: 'silly_pt', name: 'Silly Point', top: 32, left: 42, short: 'SP', side: 'Off' },
+            { id: 'short_leg', name: 'Short Leg', top: 32, left: 58, short: 'SL', side: 'Leg' },
+            { id: 'pt', name: 'Point', top: 42, left: 25, short: 'Pt', side: 'Off' },
+            { id: 'b_pt', name: 'Backward Point', top: 35, left: 28, short: 'BP', side: 'Off' },
+            { id: 'cov', name: 'Cover', top: 55, left: 28, short: 'Cov', side: 'Off' },
+            { id: 'x_cov', name: 'Extra Cover', top: 65, left: 35, short: 'XC', side: 'Off' },
+            { id: 'mid_off', name: 'Mid Off', top: 72, left: 42, short: 'MO', side: 'Off' },
+            { id: 'mid_on', name: 'Mid On', top: 72, left: 58, short: 'MI', side: 'Leg' },
+            { id: 'mid_wkt', name: 'Mid Wicket', top: 60, left: 70, short: 'MW', side: 'Leg' },
+            { id: 's_mid_wkt', name: 'Short Mid Wicket', top: 50, left: 65, short: 'SMW', side: 'Leg' },
+            { id: 'sq_leg', name: 'Square Leg', top: 42, left: 75, short: 'SqL', side: 'Leg' },
+            { id: 'b_sq_leg', name: 'Backward Square Leg', top: 35, left: 72, short: 'BSL', side: 'Leg' },
+            { id: 'fine_leg', name: 'Fine Leg', top: 25, left: 65, short: 'FL', side: 'Leg' },
+            { id: 'third_man', name: 'Third Man', top: 18, left: 22, short: '3M', side: 'Off' },
+            { id: 'deep_pt', name: 'Deep Point', top: 42, left: 12, short: 'DP', side: 'Off' },
+            { id: 'deep_cov', name: 'Deep Cover', top: 60, left: 12, short: 'DC', side: 'Off' },
+            { id: 'deep_x_cov', name: 'Deep Extra Cover', top: 75, left: 25, short: 'DXC', side: 'Off' },
+            { id: 'long_off', name: 'Long Off', top: 85, left: 42, short: 'LOf', side: 'Off' },
+            { id: 'long_on', name: 'Long On', top: 85, left: 58, short: 'LOn', side: 'Leg' },
+            { id: 'cow', name: 'Cow Corner', top: 75, left: 80, short: 'Cow', side: 'Leg' },
+            { id: 'deep_mid_wkt', name: 'Deep Mid Wicket', top: 65, left: 85, short: 'DMW', side: 'Leg' },
+            { id: 'deep_sq_leg', name: 'Deep Square Leg', top: 42, left: 88, short: 'DSL', side: 'Leg' },
+            { id: 'deep_fine_leg', name: 'Deep Fine Leg', top: 18, left: 78, short: 'DFL', side: 'Leg' },
+            { id: 'long_stop', name: 'Long Stop', top: 8, left: 50, short: 'LSt', side: 'Central' },
+            { id: 'str_hit', name: 'Straight Hit', top: 92, left: 50, short: 'Str', side: 'Central' }
+        ];
 
-// --- Batter Handling ---
-function setBatterHand(hand) {
-isRightHanded = (hand === 'RHB');
-// Update UI Buttons
-const btnRhb = document.getElementById('btn-rhb');
-const btnLhb = document.getElementById('btn-lhb');
-if (isRightHanded) {
-btnRhb.classList.add('active');
-btnLhb.classList.remove('active');
-batterIndicator.textContent = "Right Hand Bat";
-} else {
-btnLhb.classList.add('active');
-btnRhb.classList.remove('active');
-batterIndicator.textContent = "Left Hand Bat";
-}
-renderField();
-}
+        const selectedFielders = new Set(['wk', 'bwl']);
+        const fieldContainer = document.getElementById('field');
+        const playerCountDisplay = document.getElementById('playerCount');
+        const footerCountDisplay = document.getElementById('footerCount');
+        const tableBody = document.getElementById('positionTableBody');
+        const emptyState = document.getElementById('emptyState');
+        const batterIndicator = document.getElementById('batterIndicator');
 
-// --- Rendering ---
-function renderField() {
-// Remove old markers
-document.querySelectorAll('.fielder').forEach(el => el.remove());
+        // --- Core Logic ---
+        function setBatterHand(hand) {
+            isRightHanded = (hand === 'RHB');
+            document.getElementById('btn-rhb').classList.toggle('active', isRightHanded);
+            document.getElementById('btn-lhb').classList.toggle('active', !isRightHanded);
+            batterIndicator.textContent = isRightHanded ? "Right Hand Bat" : "Left Hand Bat";
+            renderField();
+        }
 
-// Check if team is full (11 players)
-const isFullTeam = selectedFielders.size >= 11;
+        function renderField() {
+            document.querySelectorAll('.fielder').forEach(el => el.remove());
+            const isFullTeam = selectedFielders.size >= 11;
 
-positions.forEach(pos => {
-const el = document.createElement('div');
-el.className = `fielder shadow-sm`;
-el.id = `marker-${pos.id}`;
+            positions.forEach(pos => {
+                const el = document.createElement('div');
+                el.className = `fielder shadow-sm`;
+                el.id = `marker-${pos.id}`;
 
-// --- Positioning Logic ---
-// If LHB, we mirror the Left coordinate (100 - left) for standard positions
-let visualLeft = pos.left;
-if (!isRightHanded && !pos.fixed) {
-visualLeft = 100 - pos.left;
-}
+                let visualLeft = pos.left;
+                if (!isRightHanded && !pos.fixed) visualLeft = 100 - pos.left;
 
-// Handle WK separately
-if (pos.id === 'wk') {
-// Use WK State
-el.style.top = `${wkPositionState.top}%`;
-el.style.left = `${wkPositionState.left}%`;
-el.classList.add('fielder-draggable');
-// WK Constraints: Top side (5-40%)
-makeDraggable(el,
-(t, l) => { wkPositionState = { top: t, left: l }; },
-{minY: 5, maxY: 40, minX: 10, maxX: 90}
-);
+                if (pos.id === 'wk') {
+                    el.style.top = `${wkPositionState.top}%`;
+                    el.style.left = `${wkPositionState.left}%`;
+                    el.classList.add('fielder-draggable');
+                    makeDraggable(el, (t, l) => { wkPositionState = { top: t, left: l }; }, {minY: 5, maxY: 40, minX: 10, maxX: 90});
+                    el.style.backgroundColor = '#2563eb';
+                    el.style.color = 'white';
+                    el.style.borderColor = 'white';
+                } else if (pos.id === 'bwl') {
+                    el.style.top = `${bwlPositionState.top}%`;
+                    el.style.left = `${bwlPositionState.left}%`;
+                    el.classList.add('fielder-draggable');
+                    makeDraggable(el, (t, l) => { bwlPositionState = { top: t, left: l }; }, {minY: 60, maxY: 95, minX: 10, maxX: 90});
+                    el.style.backgroundColor = '#2563eb';
+                    el.style.color = 'white';
+                    el.style.borderColor = 'white';
+                } else {
+                    el.style.top = `${pos.top}%`;
+                    el.style.left = `${visualLeft}%`;
+                }
 
-el.style.backgroundColor = '#2563eb';
-el.style.color = 'white';
-el.style.borderColor = 'white';
-}
-// Handle Bowler separately
-else if (pos.id === 'bwl') {
-// Use Bowler State
-el.style.top = `${bwlPositionState.top}%`;
-el.style.left = `${bwlPositionState.left}%`;
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = pos.name;
+                el.appendChild(tooltip);
 
-el.classList.add('fielder-draggable');
-// Bowler Constraints: Bottom side (60-95%)
-makeDraggable(el,
-(t, l) => { bwlPositionState = { top: t, left: l }; },
-{minY: 60, maxY: 95, minX: 10, maxX: 90}
-);
+                const label = document.createElement('span');
+                label.textContent = pos.short || '';
+                label.style.pointerEvents = 'none';
+                el.appendChild(label);
 
-el.style.backgroundColor = '#2563eb';
-el.style.color = 'white';
-el.style.borderColor = 'white';
-}
-else {
-// Standard Positions
-el.style.top = `${pos.top}%`;
-el.style.left = `${visualLeft}%`;
-}
-// Tooltip
-const tooltip = document.createElement('div');
-tooltip.className = 'tooltip';
-tooltip.textContent = pos.name;
-el.appendChild(tooltip);
+                if (pos.fixed && pos.id !== 'wk' && pos.id !== 'bwl') {
+                    el.classList.add('fielder-fixed');
+                } else if (selectedFielders.has(pos.id)) {
+                    if (pos.id !== 'wk' && pos.id !== 'bwl') {
+                        el.classList.add('fielder-selected');
+                        el.onclick = () => toggleFielder(pos.id);
+                    }
+                } else {
+                    if (pos.id !== 'wk' && pos.id !== 'bwl') {
+                        el.classList.add('fielder-empty');
+                        el.onclick = () => toggleFielder(pos.id);
+                        if (isFullTeam) el.classList.add('fielder-hidden');
+                    }
+                }
+                fieldContainer.appendChild(el);
+            });
+            updateStatsAndTable();
+        }
 
-// Short Name
-const label = document.createElement('span');
-label.textContent = pos.short || '';
-label.style.pointerEvents = 'none';
-el.appendChild(label);
+        function updateStatsAndTable() {
+            const count = selectedFielders.size;
+            playerCountDisplay.textContent = count;
+            footerCountDisplay.textContent = count;
+            playerCountDisplay.className = count === 11 ? "text-2xl font-bold text-green-400" : (count > 11 ? "text-2xl font-bold text-red-400" : "text-2xl font-bold text-white");
 
-// Classes based on selection
-if (pos.fixed && pos.id !== 'wk' && pos.id !== 'bwl') {
-el.classList.add('fielder-fixed');
-} else if (selectedFielders.has(pos.id)) {
-if (pos.id !== 'wk' && pos.id !== 'bwl') {
-el.classList.add('fielder-selected');
-el.onclick = () => toggleFielder(pos.id);
-}
-} else {
-// This is an unselected spot
-if (pos.id !== 'wk' && pos.id !== 'bwl') {
-el.classList.add('fielder-empty');
-el.onclick = () => toggleFielder(pos.id);
-// Hide logic if team is full
-if (isFullTeam) {
-el.classList.add('fielder-hidden');
-}
-}
-}
+            tableBody.innerHTML = '';
+            const sortedIds = Array.from(selectedFielders).sort((a,b) => {
+                const posA = positions.find(p => p.id === a);
+                const posB = positions.find(p => p.id === b);
+                if(posA.fixed && !posB.fixed) return -1;
+                if(!posA.fixed && posB.fixed) return 1;
+                return posA.side.localeCompare(posB.side);
+            });
 
-fieldContainer.appendChild(el);
-});
+            emptyState.style.display = sortedIds.length <= 2 ? 'block' : 'none';
+            sortedIds.forEach(id => {
+                const pos = positions.find(p => p.id === id);
+                if (!pos) return;
+                const row = document.createElement('tr');
+                row.className = "hover:bg-slate-700/50 transition-colors";
+                let sideColor = "bg-gray-600";
+                if(pos.side === 'Off') sideColor = "bg-green-600/30 text-green-400 border border-green-600/50";
+                if(pos.side === 'Leg') sideColor = "bg-blue-600/30 text-blue-400 border border-blue-600/50";
 
-updateStatsAndTable();
-}
+                row.innerHTML = `<td class="px-3 py-2 flex items-center gap-2"><div class="w-2 h-2 rounded-full ${pos.fixed ? 'bg-blue-500' : 'bg-red-500'}"></div><span>${pos.name}</span></td><td class="px-3 py-2 text-right"><span class="text-[10px] px-2 py-0.5 rounded ${sideColor}">${pos.side}</span></td>`;
+                if(!pos.fixed) {
+                    row.style.cursor = 'pointer';
+                    row.onclick = () => toggleFielder(id);
+                }
+                tableBody.appendChild(row);
+            });
+        }
 
-// --- Table & Stats ---
-function updateStatsAndTable() {
-const count = selectedFielders.size;
-playerCountDisplay.textContent = count;
-footerCountDisplay.textContent = count;
+        function toggleFielder(id) {
+            if (selectedFielders.has(id)) {
+                selectedFielders.delete(id);
+            } else {
+                if (selectedFielders.size >= 11) return;
+                selectedFielders.add(id);
+            }
+            renderField();
+        }
 
-if (count === 11) {
-playerCountDisplay.className = "text-2xl font-bold text-green-400";
-} else if (count > 11) {
-playerCountDisplay.className = "text-2xl font-bold text-red-400";
-} else {
-playerCountDisplay.className = "text-2xl font-bold text-white";
-}
+        function resetField() {
+            selectedFielders.clear();
+            selectedFielders.add('wk');
+            selectedFielders.add('bwl');
+            wkPositionState = { top: 24, left: 50 };
+            bwlPositionState = { top: 62, left: 55 };
+            renderField();
+        }
 
-// Populate Table
-tableBody.innerHTML = '';
-const sortedIds = Array.from(selectedFielders);
-// Sort: WK, Bowler, then Off side, then Leg side
-sortedIds.sort((a,b) => {
-const posA = positions.find(p => p.id === a);
-const posB = positions.find(p => p.id === b);
-if(posA.fixed && !posB.fixed) return -1;
-if(!posA.fixed && posB.fixed) return 1;
-return posA.side.localeCompare(posB.side);
-});
+        function standardField() {
+            resetField();
+            ['slip1', 'slip2', 'gully', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'fine_leg'].forEach(id => selectedFielders.add(id));
+            renderField();
+        }
 
-if (sortedIds.length <= 2) {
-emptyState.style.display = 'block';
-} else {
-emptyState.style.display = 'none';
-sortedIds.forEach(id => {
-const pos = positions.find(p => p.id === id);
-if (!pos) return;
-const row = document.createElement('tr');
-row.className = "hover:bg-slate-700/50 transition-colors";
-// Side Badge Color
-let sideColor = "bg-gray-600";
-if(pos.side === 'Off') sideColor = "bg-green-600/30 text-green-400 border border-green-600/50";
-if(pos.side === 'Leg') sideColor = "bg-blue-600/30 text-blue-400 border border-blue-600/50";
+        function odiField() {
+            resetField();
+            ['slip1', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'sq_leg', 'third_man', 'fine_leg'].forEach(id => selectedFielders.add(id));
+            renderField();
+        }
 
-row.innerHTML = `
-<td class="px-3 py-2 flex items-center gap-2">
-<div class="w-2 h-2 rounded-full ${pos.fixed ? 'bg-blue-500' : 'bg-red-500'}"></div>
-<span>${pos.name}</span>
-</td>
-<td class="px-3 py-2 text-right">
-<span class="text-[10px] px-2 py-0.5 rounded ${sideColor}">
-${pos.side}
-</span>
-</td>
-`;
-// Allow removing from table click
-if(!pos.fixed) {
-row.style.cursor = 'pointer';
-row.onclick = () => toggleFielder(id);
-row.title = "Click to remove";
-}
+        function makeDraggable(el, updateCallback, constraints) {
+            let isDragging = false;
+            const onStart = () => isDragging = true;
+            const onMove = (e) => {
+                if (!isDragging) return;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const rect = fieldContainer.getBoundingClientRect();
+                let leftPct = ((clientX - rect.left) / rect.width) * 100;
+                let topPct = ((clientY - rect.top) / rect.height) * 100;
+                if (constraints) {
+                    leftPct = Math.min(Math.max(leftPct, constraints.minX), constraints.maxX);
+                    topPct = Math.min(Math.max(topPct, constraints.minY), constraints.maxY);
+                }
+                el.style.left = `${leftPct}%`;
+                el.style.top = `${topPct}%`;
+                if (updateCallback) updateCallback(topPct, leftPct);
+            };
+            const onEnd = () => isDragging = false;
+            el.addEventListener('mousedown', onStart);
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onEnd);
+            el.addEventListener('touchstart', onStart);
+            window.addEventListener('touchmove', onMove);
+            window.addEventListener('touchend', onEnd);
+        }
 
-tableBody.appendChild(row);
-});
-}
-}
-
-// --- Interaction Logic ---
-function toggleFielder(id) {
-const pos = positions.find(p => p.id === id);
-if (pos.fixed && pos.id !== 'wk' && pos.id !== 'bwl') return;
-
-if (selectedFielders.has(id)) {
-selectedFielders.delete(id);
-} else {
-if (selectedFielders.size >= 11) {
-alert("Team is full (11 players). Click a Red position to remove it first.");
-return;
-}
-selectedFielders.add(id);
-}
-renderField();
-}
-
-function resetField() {
-selectedFielders.clear();
-selectedFielders.add('wk');
-selectedFielders.add('bwl');
-wkPositionState = { top: 24, left: 50 };
-bwlPositionState = { top: 62, left: 55 };
-renderField();
-}
-
-function standardField() {
-resetField();
-const set = ['slip1', 'slip2', 'gully', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'fine_leg'];
-set.forEach(id => selectedFielders.add(id));
-renderField();
-}
-
-function odiField() {
-resetField();
-const set = ['slip1', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'sq_leg', 'third_man', 'fine_leg'];
-set.forEach(id => selectedFielders.add(id));
-renderField();
-}
-
-// --- Generalized Drag Logic ---
-function makeDraggable(el, updateCallback, constraints) {
-let isDragging = false;
-
-function onStart(e) {
-isDragging = true;
-// Don't prevent default blindly to allow scrolling if needed, but here we prevent to stop scroll
-// e.preventDefault();
-}
-
-function onMove(e) {
-if (!isDragging) return;
-// Handle touch or mouse
-const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-const rect = fieldContainer.getBoundingClientRect();
-let leftPct = ((clientX - rect.left) / rect.width) * 100;
-let topPct = ((clientY - rect.top) / rect.height) * 100;
-
-// Apply specific constraints if provided
-if (constraints) {
-if (constraints.minX !== undefined) leftPct = Math.max(constraints.minX, leftPct);
-if (constraints.maxX !== undefined) leftPct = Math.min(constraints.maxX, leftPct);
-if (constraints.minY !== undefined) topPct = Math.max(constraints.minY, topPct);
-if (constraints.maxY !== undefined) topPct = Math.min(constraints.maxY, topPct);
-}
-
-// Visual Update
-el.style.left = `${leftPct}%`;
-el.style.top = `${topPct}%`;
-
-// Update State Callback
-if (updateCallback) {
-updateCallback(topPct, leftPct);
-}
-}
-
-function onEnd() { isDragging = false; }
-
-el.addEventListener('mousedown', onStart);
-window.addEventListener('mousemove', onMove);
-window.addEventListener('mouseup', onEnd);
-el.addEventListener('touchstart', onStart, {passive: false});
-window.addEventListener('touchmove', onMove, {passive: false});
-window.addEventListener('touchend', onEnd);
-}
-
-// Init
-renderField();
-
-</script>
+        renderField();
+    </script>
 </body>
 </html>
