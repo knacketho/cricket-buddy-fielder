@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cricket Fielding Planner - AI Strategist</title>
+    <title>Cricket Fielding Planner - Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for the field */
@@ -176,6 +176,7 @@
         /* Field Scaling Logic */
         .field-column {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
         }
 
         .view-pc .field-column { max-width: 680px; }
@@ -194,16 +195,6 @@
         }
         .force-mobile .header-row {
             flex-direction: column !important;
-        }
-
-        /* Animation for AI pulse */
-        @keyframes ai-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
-        .ai-active-glow {
-            animation: ai-pulse 2s infinite;
         }
     </style>
 </head>
@@ -261,7 +252,7 @@
         <div class="main-layout-row w-full flex flex-col md:flex-row gap-8 items-start justify-center">
             
             <!-- Field Column -->
-            <div class="field-column flex flex-col items-center w-full">
+            <div class="field-column flex flex-col items-center">
                 <main class="relative w-full aspect-square shadow-2xl rounded-full overflow-hidden border-4 border-slate-800">
                     <div class="cricket-field w-full h-full relative" id="field">
                         <div class="inner-ring"></div>
@@ -280,62 +271,48 @@
                     </div>
                 </main>
 
-                <!-- AI Control Center -->
+                <!-- Strategic Preset Center -->
                 <div class="mt-6 w-full bg-slate-800/50 p-4 rounded-xl border border-slate-700 shadow-xl">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-sm font-bold text-blue-400 flex items-center gap-2 uppercase tracking-tight">
-                            <span>✨</span> AI Strategy Center
-                        </h3>
-                        <div id="ai-loading" class="hidden">
-                            <div class="flex items-center gap-2 text-xs text-blue-300">
-                                <div class="w-2 h-2 bg-blue-400 rounded-full animate-ping"></div>
-                                Consulting Experts...
-                            </div>
-                        </div>
-                    </div>
+                    <h3 class="text-sm font-bold text-blue-400 flex items-center gap-2 uppercase tracking-tight mb-3">
+                        <span>🛡️</span> Strategic Preset Library
+                    </h3>
                     
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <div class="space-y-1">
                             <label class="text-[10px] text-slate-500 uppercase font-bold">Batter Profile</label>
-                            <select id="ai-batter-type" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs focus:border-blue-500 outline-none">
-                                <option value="Aggressive Power Hitter">Power Hitter 🚀</option>
-                                <option value="Defensive Wall">Defensive 🛡️</option>
-                                <option value="Gap Finder / Accumulator">Accumulator 🏏</option>
+                            <select id="preset-batter-type" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs focus:border-blue-500 outline-none">
+                                <option value="Power Hitter">Power Hitter 🚀</option>
+                                <option value="Defensive">Defensive 🛡️</option>
+                                <option value="Accumulator">Accumulator 🏏</option>
                                 <option value="Tail-ender">Tail-ender 📉</option>
                             </select>
                         </div>
                         <div class="space-y-1">
                             <label class="text-[10px] text-slate-500 uppercase font-bold">Bowling Strategy</label>
-                            <select id="ai-bowler-type" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs focus:border-blue-500 outline-none">
-                                <option value="Fast (Bouncer/Short Strategy)">Fast / Bouncers ☄️</option>
-                                <option value="Swing (Outside Off Channel)">Swing / Outside Off 🌪️</option>
-                                <option value="Spin (Turning away)">Spin (Tossing up) 🌀</option>
-                                <option value="Death Overs (Yorkers)">Death Overs 🎯</option>
+                            <select id="preset-bowler-type" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs focus:border-blue-500 outline-none">
+                                <option value="Fast">Fast / Bouncers ☄️</option>
+                                <option value="Swing">Swing / Off Channel 🌪️</option>
+                                <option value="Spin">Spin 🌀</option>
+                                <option value="Death">Death Overs 🎯</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="flex gap-2">
-                        <button onclick="aiSuggestSetup()" class="flex-1 bg-blue-600 hover:bg-blue-500 p-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20">
-                            <span>✨</span> Suggest Setup
-                        </button>
-                        <button onclick="aiAnalyzeField()" class="flex-1 bg-slate-700 hover:bg-slate-600 p-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 border border-slate-600">
-                            <span>✨</span> Analyze Current
-                        </button>
-                    </div>
+                    <button onclick="applyPreset()" class="w-full bg-blue-600 hover:bg-blue-500 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-blue-900/20 mb-3">
+                        Apply Strategic Setup
+                    </button>
 
-                    <div id="ai-feedback-box" class="mt-4 hidden animate-in fade-in slide-in-from-top-2 duration-500">
-                        <div class="bg-slate-900/80 border border-blue-500/30 rounded-lg p-3 relative">
-                            <button onclick="document.getElementById('ai-feedback-box').classList.add('hidden')" class="absolute top-1 right-2 text-slate-500 hover:text-white">×</button>
-                            <div class="text-[11px] leading-relaxed text-blue-100 italic" id="ai-feedback-text"></div>
+                    <div id="logic-box" class="hidden animate-in fade-in duration-300">
+                        <div class="bg-slate-900/80 border border-blue-500/30 rounded-lg p-3">
+                            <div class="text-[11px] leading-relaxed text-blue-100 italic" id="logic-text"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-4 flex flex-wrap justify-center gap-2">
                     <button onclick="resetField()" class="px-4 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 rounded-full font-medium transition-colors border border-slate-600">Reset</button>
-                    <button onclick="standardField()" class="px-4 py-1.5 text-xs bg-green-600/20 text-green-400 hover:bg-green-600/30 rounded-full font-medium transition-colors border border-green-600/50">Test Std</button>
-                    <button onclick="odiField()" class="px-4 py-1.5 text-xs bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded-full font-medium transition-colors border border-blue-600/50">ODI Circle</button>
+                    <button onclick="applyStandard('test')" class="px-4 py-1.5 text-xs bg-green-600/20 text-green-400 hover:bg-green-600/30 rounded-full font-medium transition-colors border border-green-600/50">Test Match Std</button>
+                    <button onclick="applyStandard('odi')" class="px-4 py-1.5 text-xs bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded-full font-medium transition-colors border border-blue-600/50">ODI Circle</button>
                 </div>
             </div>
 
@@ -366,147 +343,88 @@
     </div>
 
     <script>
-        // --- Gemini API Configuration ---
-        const apiKey = ""; 
-
-        async function callGemini(prompt, systemPrompt = "You are a professional cricket fielding coach and tactical strategist.") {
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
-            };
-
-            if (prompt.includes("JSON")) {
-                payload.generationConfig = {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            selectedIds: { type: "ARRAY", items: { type: "STRING" } },
-                            logic: { type: "STRING" }
-                        },
-                        required: ["selectedIds", "logic"]
-                    }
-                };
-            }
-
-            let retries = 0;
-            const maxRetries = 5;
-            
-            while (retries < maxRetries) {
-                try {
-                    const response = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) throw new Error('API request failed');
-                    
-                    const result = await response.json();
-                    return result.candidates?.[0]?.content?.parts?.[0]?.text;
-                } catch (error) {
-                    retries++;
-                    if (retries === maxRetries) throw error;
-                    await new Promise(res => setTimeout(res, Math.pow(2, retries) * 1000));
+        // --- Strategic Setup Library ---
+        const fieldPresets = {
+            "Power Hitter": {
+                "Fast": {
+                    ids: ['deep_mid_wkt', 'deep_sq_leg', 'long_on', 'long_off', 'deep_fine_leg', 'third_man', 'pt', 'cov', 'mid_wkt'],
+                    logic: "Protecting the boundaries with 5-6 deep fielders. Bouncer-heavy field with deep square leg and fine leg active."
+                },
+                "Swing": {
+                    ids: ['slip1', 'slip2', 'gully', 'third_man', 'deep_pt', 'deep_cov', 'long_off', 'long_on', 'deep_sq_leg'],
+                    logic: "Mixed attacking field. Two slips for the edge, but deep fielders for the lofted drives on both sides."
+                },
+                "Spin": {
+                    ids: ['long_on', 'long_off', 'cow', 'deep_mid_wkt', 'deep_sq_leg', 'pt', 'cov', 'mid_wkt', 'sq_leg'],
+                    logic: "Boundary protection against the sweep and slog-sweep. Long on and Long off are essential."
+                },
+                "Death": {
+                    ids: ['long_on', 'long_off', 'deep_mid_wkt', 'deep_sq_leg', 'deep_fine_leg', 'third_man', 'deep_cov', 'deep_pt', 'cow'],
+                    logic: "Extreme boundary protection. 9 fielders out to minimize damage from yorkers or low full tosses."
+                }
+            },
+            "Defensive": {
+                "Fast": {
+                    ids: ['slip1', 'slip2', 'slip3', 'slip4', 'gully', 'short_leg', 'pt', 'mid_off', 'mid_on'],
+                    logic: "Aggressive Test-match style. 4 slips and a short leg to capitalize on the defensive stance and pressure."
+                },
+                "Swing": {
+                    ids: ['slip1', 'slip2', 'slip3', 'gully', 'fly_slip', 'pt', 'cov', 'mid_off', 'mid_on'],
+                    logic: "The 'Corridor of Uncertainty' setup. Focusing on the outside edge with heavy catching cordon."
+                },
+                "Spin": {
+                    ids: ['slip1', 'silly_pt', 'short_leg', 'pt', 'mid_wkt', 'sq_leg', 'mid_on', 'mid_off', 'cov'],
+                    logic: "Close-in catching field. Silly point and Short leg are active to catch the defensive prod."
+                },
+                "Death": {
+                    ids: ['pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'sq_leg', 'fine_leg', 'third_man', 'x_cov'],
+                    logic: "Inner circle squeeze. Forcing the defensive batter to find gaps to prevent singles."
+                }
+            },
+            "Accumulator": {
+                "Fast": {
+                    ids: ['slip1', 'gully', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'sq_leg', 'fine_leg'],
+                    logic: "Standard balanced field. Covering the primary scoring areas in the inner circle to stop quick singles."
+                },
+                "Swing": {
+                    ids: ['slip1', 'slip2', 'gully', 'pt', 'cov', 'mid_off', 'mid_on', 'sq_leg', 'third_man'],
+                    logic: "Attacking the edge while maintaining a ring. Prevents the accumulator from manipulating the strike."
+                },
+                "Spin": {
+                    ids: ['slip1', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'sq_leg', 'fine_leg', 'b_sq_leg'],
+                    logic: "Preventing the sweep and rotation. Keeping the batter under pressure to take risks."
+                },
+                "Death": {
+                    ids: ['long_on', 'long_off', 'deep_mid_wkt', 'deep_cov', 'deep_pt', 'sq_leg', 'fine_leg', 'third_man', 'mid_wkt'],
+                    logic: "Deep ring setup. Forcing the batter to hit through the circle to get boundaries."
+                }
+            },
+            "Tail-ender": {
+                "Fast": {
+                    ids: ['slip1', 'slip2', 'gully', 'short_leg', 'pt', 'sq_leg', 'mid_on', 'mid_off', 'fine_leg'],
+                    logic: "Pure aggression. Short leg and slips to target the lack of technique against pace."
+                },
+                "Swing": {
+                    ids: ['slip1', 'slip2', 'slip3', 'gully', 'pt', 'cov', 'mid_off', 'mid_on', 'third_man'],
+                    logic: "Targeting the outside edge. Tail-enders often play away from the body."
+                },
+                "Spin": {
+                    ids: ['slip1', 'silly_pt', 'short_leg', 'leg_gully', 'pt', 'mid_wkt', 'sq_leg', 'mid_on', 'mid_off'],
+                    logic: "Crowding the bat. Applying maximum psychological pressure with close-in fielders."
+                },
+                "Death": {
+                    ids: ['slip1', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'sq_leg', 'fine_leg', 'third_man'],
+                    logic: "Aggressive inner ring. No deep fielders; forcing the tail-ender to hit over the top."
                 }
             }
-        }
+        };
 
-        // --- AI Actions ---
-        async function aiSuggestSetup() {
-            const batter = document.getElementById('ai-batter-type').value;
-            const bowler = document.getElementById('ai-bowler-type').value;
-            const loader = document.getElementById('ai-loading');
-            const feedbackBox = document.getElementById('ai-feedback-box');
-            const feedbackText = document.getElementById('ai-feedback-text');
-
-            loader.classList.remove('hidden');
-            
-            const positionList = positions.map(p => `${p.id} (${p.name})`).join(", ");
-            const prompt = `Suggest an 11-man fielding setup for a ${batter} against ${bowler}. 
-            Choose EXACTLY 11 IDs from [${positionList}]. Always include 'wk' and 'bwl'.
-            Return JSON with: 'selectedIds' (Array) and 'logic' (String).`;
-
-            try {
-                const response = await callGemini(prompt);
-                const data = JSON.parse(response);
-                
-                selectedFielders.clear();
-                selectedFielders.add('wk');
-                selectedFielders.add('bwl');
-                data.selectedIds.forEach(id => {
-                    if (positions.find(p => p.id === id)) selectedFielders.add(id);
-                });
-
-                renderField();
-                feedbackText.textContent = data.logic;
-                feedbackBox.classList.remove('hidden');
-            } catch (err) {
-                console.error(err);
-            } finally {
-                loader.classList.add('hidden');
-            }
-        }
-
-        async function aiAnalyzeField() {
-            const loader = document.getElementById('ai-loading');
-            const feedbackBox = document.getElementById('ai-feedback-box');
-            const feedbackText = document.getElementById('ai-feedback-text');
-            
-            if (selectedFielders.size < 5) return;
-
-            loader.classList.remove('hidden');
-            const currentField = Array.from(selectedFielders).map(id => positions.find(p => p.id === id)?.name).join(", ");
-            const prompt = `Review this fielding setup: [${currentField}]. Batter is ${isRightHanded ? 'RHB' : 'LHB'}. Provide professional tactical feedback (max 50 words).`;
-
-            try {
-                const analysis = await callGemini(prompt);
-                feedbackText.textContent = analysis;
-                feedbackBox.classList.remove('hidden');
-            } finally {
-                loader.classList.add('hidden');
-            }
-        }
-
-        // --- View Switching Logic ---
-        function changeView(device) {
-            const container = document.getElementById('app-container');
-            const btns = {
-                mobile: document.getElementById('view-mobile'),
-                tablet: document.getElementById('view-tablet'),
-                pc: document.getElementById('view-pc')
-            };
-
-            // Reset UI
-            container.classList.remove('view-pc', 'view-tablet', 'view-mobile', 'force-mobile');
-            Object.values(btns).forEach(b => b.classList.replace('bg-blue-600', 'bg-slate-800'));
-            Object.values(btns).forEach(b => b.classList.replace('border-blue-400', 'border-slate-700'));
-
-            // Set active classes
-            btns[device].classList.replace('bg-slate-800', 'bg-blue-600');
-            btns[device].classList.replace('border-slate-700', 'border-blue-400');
-            container.classList.add(`view-${device}`);
-
-            if (device === 'mobile') {
-                container.style.maxWidth = "420px";
-                container.classList.add('force-mobile');
-            } else if (device === 'tablet') {
-                container.style.maxWidth = "850px";
-            } else {
-                container.style.maxWidth = "1280px"; 
-            }
-            
-            // Re-render to ensure layout looks crisp
-            setTimeout(renderField, 300);
-        }
-
-        // --- Data & Positions ---
+        // --- Configuration & State ---
         let wkPositionState = { top: 24, left: 50 };
         let bwlPositionState = { top: 62, left: 55 };
         let isRightHanded = true;
-
+        const selectedFielders = new Set(['wk', 'bwl']);
+        
         const positions = [
             { id: 'wk', name: 'Wicket Keeper', fixed: true, short: 'WK', side: 'Central' },
             { id: 'bwl', name: 'Bowler', fixed: true, short: 'BWL', side: 'Central' },
@@ -545,20 +463,81 @@
             { id: 'str_hit', name: 'Straight Hit', top: 92, left: 50, short: 'Str', side: 'Central' }
         ];
 
-        const selectedFielders = new Set(['wk', 'bwl']);
         const fieldContainer = document.getElementById('field');
         const playerCountDisplay = document.getElementById('playerCount');
         const footerCountDisplay = document.getElementById('footerCount');
         const tableBody = document.getElementById('positionTableBody');
         const emptyState = document.getElementById('emptyState');
-        const batterIndicator = document.getElementById('batterIndicator');
 
-        // --- Core Rendering ---
+        // --- Functions ---
+
+        function applyPreset() {
+            const batter = document.getElementById('preset-batter-type').value;
+            const bowler = document.getElementById('preset-bowler-type').value;
+            const preset = fieldPresets[batter][bowler];
+            
+            selectedFielders.clear();
+            selectedFielders.add('wk');
+            selectedFielders.add('bwl');
+            preset.ids.forEach(id => selectedFielders.add(id));
+            
+            document.getElementById('logic-text').textContent = preset.logic;
+            document.getElementById('logic-box').classList.remove('hidden');
+            renderField();
+        }
+
+        function applyStandard(type) {
+            resetField();
+            const set = type === 'test' 
+                ? ['slip1', 'slip2', 'gully', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'fine_leg']
+                : ['slip1', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'sq_leg', 'third_man', 'fine_leg'];
+            set.forEach(id => selectedFielders.add(id));
+            renderField();
+        }
+
+        function resetField() {
+            selectedFielders.clear();
+            selectedFielders.add('wk');
+            selectedFielders.add('bwl');
+            wkPositionState = { top: 24, left: 50 };
+            bwlPositionState = { top: 62, left: 55 };
+            document.getElementById('logic-box').classList.add('hidden');
+            renderField();
+        }
+
+        function changeView(device) {
+            const container = document.getElementById('app-container');
+            const btns = {
+                mobile: document.getElementById('view-mobile'),
+                tablet: document.getElementById('view-tablet'),
+                pc: document.getElementById('view-pc')
+            };
+
+            container.classList.remove('view-pc', 'view-tablet', 'view-mobile', 'force-mobile');
+            Object.values(btns).forEach(b => b.classList.replace('bg-blue-600', 'bg-slate-800'));
+            Object.values(btns).forEach(b => b.classList.replace('border-blue-400', 'border-slate-700'));
+
+            btns[device].classList.replace('bg-slate-800', 'bg-blue-600');
+            btns[device].classList.replace('border-slate-700', 'border-blue-400');
+            container.classList.add(`view-${device}`);
+
+            if (device === 'mobile') {
+                container.style.maxWidth = "420px";
+                container.classList.add('force-mobile');
+            } else if (device === 'tablet') {
+                container.style.maxWidth = "850px";
+            } else {
+                container.style.maxWidth = "1280px"; 
+            }
+            
+            setTimeout(renderField, 300);
+        }
+
         function setBatterHand(hand) {
             isRightHanded = (hand === 'RHB');
             document.getElementById('btn-rhb').classList.toggle('active', isRightHanded);
             document.getElementById('btn-lhb').classList.toggle('active', !isRightHanded);
-            batterIndicator.textContent = isRightHanded ? "Right Hand Bat" : "Left Hand Bat";
+            document.getElementById('batterIndicator').textContent = isRightHanded ? "Right Hand Bat" : "Left Hand Bat";
             renderField();
         }
 
@@ -654,27 +633,6 @@
         function toggleFielder(id) {
             if (selectedFielders.has(id)) selectedFielders.delete(id);
             else if (selectedFielders.size < 11) selectedFielders.add(id);
-            renderField();
-        }
-
-        function resetField() {
-            selectedFielders.clear();
-            selectedFielders.add('wk');
-            selectedFielders.add('bwl');
-            wkPositionState = { top: 24, left: 50 };
-            bwlPositionState = { top: 62, left: 55 };
-            renderField();
-        }
-
-        function standardField() {
-            resetField();
-            ['slip1', 'slip2', 'gully', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'fine_leg'].forEach(id => selectedFielders.add(id));
-            renderField();
-        }
-
-        function odiField() {
-            resetField();
-            ['slip1', 'pt', 'cov', 'mid_off', 'mid_on', 'mid_wkt', 'sq_leg', 'third_man', 'fine_leg'].forEach(id => selectedFielders.add(id));
             renderField();
         }
 
