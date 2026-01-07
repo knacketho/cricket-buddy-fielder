@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cricket Field Designer</title>
+    <title>Cricket buddy - fielder</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,9 +31,6 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
         .vertical-text { writing-mode: vertical-rl; }
         
-        /* Device Preview Transitions */
-        #mainWrapper { transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1); margin: 0 auto; }
-        
         /* Ensure no horizontal scroll */
         body { overflow-x: hidden; }
         
@@ -47,25 +44,14 @@
 <body class="bg-gray-100 dark:bg-slate-900 min-h-screen font-sans transition-colors duration-300">
 
 <div class="w-full max-w-7xl mx-auto px-2 sm:px-4 py-4">
-    <!-- Top Toolbar: Theme & Device View -->
-    <div class="flex flex-wrap justify-between items-center mb-4 bg-white dark:bg-slate-800 p-2 sm:p-3 rounded-xl shadow-sm gap-2 sm:gap-4">
-        <div class="flex items-center space-x-2">
-            <span class="text-[10px] sm:text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">View:</span>
-            <div class="flex bg-gray-100 dark:bg-slate-700 p-1 rounded-lg">
-                <button onclick="setDevice('mobile')" id="btnViewMobile" class="p-1.5 rounded-md hover:bg-white dark:hover:bg-slate-600 transition" title="Mobile View">
-                    <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                </button>
-                <button onclick="setDevice('tablet')" id="btnViewTablet" class="p-1.5 rounded-md hover:bg-white dark:hover:bg-slate-600 transition" title="Tablet View">
-                    <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                </button>
-                <button onclick="setDevice('pc')" id="btnViewPC" class="p-1.5 rounded-md bg-white dark:bg-slate-600 shadow-sm transition" title="Desktop View">
-                    <svg class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                </button>
-            </div>
+    <!-- Header: Centered Branding & Theme Toggle -->
+    <div class="relative flex justify-center items-center mb-6 bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-sm border border-transparent dark:border-slate-700">
+        <div class="text-center">
+            <h1 class="text-xl sm:text-3xl font-bold text-green-800 dark:text-green-400 tracking-tight leading-none">Cricket buddy - fielder</h1>
+            <p class="text-[10px] sm:text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">Tactical planning for international formations & player profiles.</p>
         </div>
-
-        <div class="flex items-center space-x-4">
-            <button id="themeToggle" class="p-2 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-yellow-400 hover:ring-2 ring-green-500 transition">
+        <div class="absolute right-4 top-1/2 -translate-y-1/2">
+            <button id="themeToggle" class="p-2 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-yellow-400 hover:ring-2 ring-green-500 transition" title="Toggle Light/Dark Mode">
                 <svg id="sunIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1m-16 0H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l.707.707M6.343 6.343l.707-.707M14.5 12a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path></svg>
                 <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
             </button>
@@ -73,16 +59,19 @@
     </div>
 
     <div id="mainWrapper" class="w-full">
-        <header class="mb-4 text-center">
-            <h1 class="text-2xl sm:text-3xl font-bold text-green-800 dark:text-green-400 tracking-tight">Cricket Strategy Engine</h1>
-            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Tactical planning for international formations & player profiles.</p>
-        </header>
-
-        <!-- Main Layout: Reordered for Mobile -->
+        <!-- Main Layout Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
             
-            <!-- 1. Visualization Canvas (Top on Mobile) -->
-            <div class="order-1 lg:order-2 lg:col-span-6 bg-white dark:bg-slate-800 p-2 sm:p-4 rounded-xl shadow-md relative overflow-hidden flex flex-col items-center">
+            <!-- 1. Position Library (Left on PC, Bottom on Mobile) -->
+            <div class="order-3 lg:order-1 lg:col-span-3 bg-white dark:bg-slate-800 p-3 sm:p-5 rounded-xl shadow-md h-[400px] lg:h-[600px] flex flex-col border border-transparent dark:border-slate-700">
+                <h2 class="font-bold text-gray-700 dark:text-gray-200 border-b dark:border-slate-700 pb-2 mb-3 text-sm">Position Library</h2>
+                <div id="positionList" class="flex-1 overflow-y-auto custom-scroll space-y-1 pr-1">
+                    <!-- Buttons injected by JS -->
+                </div>
+            </div>
+
+            <!-- 2. Visualization Canvas (Middle on PC, Top on Mobile) -->
+            <div class="order-1 lg:order-2 lg:col-span-6 bg-white dark:bg-slate-800 p-2 sm:p-4 rounded-xl shadow-md relative overflow-hidden flex flex-col items-center border border-transparent dark:border-slate-700">
                 <!-- Side Labels -->
                 <div id="sideLabelLeft" class="side-label absolute top-1/2 left-1 sm:left-4 -translate-y-1/2 text-[8px] sm:text-[10px] font-black text-gray-400 dark:text-gray-600 uppercase vertical-text tracking-widest rotate-180">Off Side</div>
                 <div id="sideLabelRight" class="side-label absolute top-1/2 right-1 sm:right-4 -translate-y-1/2 text-[8px] sm:text-[10px] font-black text-gray-400 dark:text-gray-600 uppercase vertical-text tracking-widest">Leg Side</div>
@@ -128,9 +117,9 @@
                 <div id="statusMsg" class="mt-2 text-[10px] sm:text-xs font-medium text-gray-400 dark:text-gray-500 h-4 text-center"></div>
             </div>
 
-            <!-- 2. Strategy & Control Panel (Middle on Mobile) -->
-            <div class="order-2 lg:order-1 lg:col-span-3 space-y-4">
-                <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-xl shadow-md space-y-4">
+            <!-- 3. Strategy & Control Panel (Right on PC, Middle on Mobile) -->
+            <div class="order-2 lg:order-3 lg:col-span-3 space-y-4">
+                <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-xl shadow-md space-y-4 border border-transparent dark:border-slate-700">
                     <h2 class="font-bold text-sm sm:text-base text-gray-700 dark:text-gray-200 border-b dark:border-slate-700 pb-2 flex items-center">
                         <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                         Strategies
@@ -195,13 +184,13 @@
                         </button>
                     </div>
 
-                    <div class="pt-2 border-t dark:border-slate-700 grid grid-cols-2 gap-2">
-                        <button id="saveBtn" class="py-1.5 px-3 border border-gray-200 dark:border-slate-600 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition text-[10px] font-bold">Save</button>
-                        <button id="resetBtn" class="py-1.5 px-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition text-[10px] font-bold">Reset All</button>
+                    <div class="pt-2 border-t dark:border-slate-700">
+                        <button id="resetBtn" class="w-full py-1.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition text-[10px] font-bold uppercase">Reset All Settings</button>
                     </div>
                 </div>
 
-                <div class="bg-slate-800 dark:bg-black text-white p-3 sm:p-5 rounded-xl shadow-md">
+                <!-- Fielder Counter -->
+                <div class="bg-slate-800 dark:bg-black text-white p-3 sm:p-5 rounded-xl shadow-md border border-slate-700">
                     <div class="flex justify-between items-end">
                         <div>
                             <div class="text-[9px] uppercase opacity-60 font-bold tracking-tight">Fielders</div>
@@ -214,20 +203,12 @@
                 </div>
             </div>
 
-            <!-- 3. Position Library (Bottom on Mobile) -->
-            <div class="order-3 lg:col-span-3 bg-white dark:bg-slate-800 p-3 sm:p-5 rounded-xl shadow-md h-[400px] lg:h-[600px] flex flex-col">
-                <h2 class="font-bold text-gray-700 dark:text-gray-200 border-b dark:border-slate-700 pb-2 mb-3 text-sm">Library</h2>
-                <div id="positionList" class="flex-1 overflow-y-auto custom-scroll space-y-1 pr-1">
-                    <!-- Buttons injected by JS -->
-                </div>
-            </div>
-
         </div>
 
         <footer class="mt-8 mb-6 text-center border-t dark:border-slate-800 pt-6">
-            <p class="text-[10px] sm:text-xs text-gray-400 dark:text-gray-600 font-medium">
-                Cricket Field Strategist &copy; 2026 | Created by 
-                <a href="mailto:raghunathsawant@duck.com" class="text-green-600 hover:text-green-500 transition underline decoration-dotted">raghunathsawant@duck.com</a>
+            <p class="text-[10px] sm:text-xs text-gray-400 dark:text-gray-600 font-medium tracking-wide">
+                Created by 
+                <a href="mailto:raghunathsawant@duck.com" class="text-green-600 dark:text-green-500 hover:text-green-500 transition underline decoration-dotted font-bold">raghunathsawant@duck.com</a>
             </p>
         </footer>
     </div>
@@ -249,15 +230,13 @@
     const positionList = document.getElementById('positionList');
     const fielderCountEl = document.getElementById('fielderCount');
     const resetBtn = document.getElementById('resetBtn');
-    const saveBtn = document.getElementById('saveBtn');
     const statusMsg = document.getElementById('statusMsg');
     const strategyTag = document.getElementById('strategyTag');
     const themeToggle = document.getElementById('themeToggle');
     const sunIcon = document.getElementById('sunIcon');
     const moonIcon = document.getElementById('moonIcon');
-    const mainWrapper = document.getElementById('mainWrapper');
 
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'cricket-field-v6';
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'cricket-buddy-fielder';
 
     const FIXED_FIELDERS = [
         { id: 'wk', label: 'WK', x: 250, y: 175, color: '#dc2626', locked: true }
@@ -321,23 +300,6 @@
         'leg_trap': ['leg_slip', 'leg_gully', 'short_leg', 'sq_leg', 'mid_wicket', 'mid_on', 'long_on', 'deep_sq_leg', 'mid_off']
     };
 
-    // --- Device Preview Logic ---
-    window.setDevice = (device) => {
-        const widths = { 'mobile': '375px', 'tablet': '768px', 'pc': '100%' };
-        mainWrapper.style.maxWidth = widths[device];
-        
-        // Update active class on buttons
-        const deviceBtns = [document.getElementById('btnViewMobile'), document.getElementById('btnViewTablet'), document.getElementById('btnViewPC')];
-        deviceBtns.forEach(btn => {
-            btn.classList.remove('bg-white', 'dark:bg-slate-600', 'shadow-sm');
-        });
-        
-        if(device === 'mobile') document.getElementById('btnViewMobile').classList.add('bg-white', 'dark:bg-slate-600', 'shadow-sm');
-        if(device === 'tablet') document.getElementById('btnViewTablet').classList.add('bg-white', 'dark:bg-slate-600', 'shadow-sm');
-        if(device === 'pc') document.getElementById('btnViewPC').classList.add('bg-white', 'dark:bg-slate-600', 'shadow-sm');
-    };
-
-    // --- Theme Logic ---
     function initTheme() {
         const savedTheme = localStorage.getItem(`${appId}_theme`) || 'light';
         if (savedTheme === 'dark') {
@@ -376,9 +338,7 @@
             const isSelected = isFielderSelected(pos.id);
             btn.className = `w-full text-left px-3 py-2 rounded-lg text-[10px] transition flex justify-between items-center group
                 ${isSelected ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 font-bold border-l-4 border-green-500' : 'bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-600 border-l-4 border-transparent'}`;
-            
             btn.innerHTML = `<span>${pos.label}</span><span class="opacity-0 group-hover:opacity-100">${isSelected ? '✕' : '+'}</span>`;
-            
             btn.onclick = () => toggleFielder(pos);
             btn.onmouseenter = () => showGhost(pos);
             btn.onmouseleave = hideGhost;
@@ -564,30 +524,17 @@
         btnRHB.onclick = () => updateOrientation(true);
         btnLHB.onclick = () => updateOrientation(false);
         applyStrategyBtn.onclick = generateTacticalField;
-        
-        formationSelect.onchange = (e) => { 
-            if (e.target.value) loadIconicFormation(e.target.value); 
-        };
-
+        formationSelect.onchange = (e) => { if (e.target.value) loadIconicFormation(e.target.value); };
         clearFormationBtn.onclick = () => {
             selectedFielders = [];
             formationSelect.value = "";
             strategyTag.textContent = "Custom";
             strategyTag.className = "px-2 py-0.5 bg-gray-500 rounded text-[8px] font-bold uppercase mb-1 text-white truncate max-w-[100px]";
-            renderPositionList();
-            renderField();
-            showStatus("Cleared");
+            renderPositionList(); renderField(); showStatus("Cleared");
         };
-        
         resetBtn.onclick = () => {
             selectedFielders = []; bowler.x = 250; isRHB = true; updateOrientation(true);
-            formationSelect.value = ""; renderPositionList(); renderField();
-            showStatus("Reset");
-        };
-
-        saveBtn.onclick = () => {
-            localStorage.setItem(`${appId}_saved_field`, JSON.stringify({ selectedFielders, bowler, isRHB }));
-            showStatus('Saved!');
+            formationSelect.value = ""; renderPositionList(); renderField(); showStatus("Reset");
         };
     }
 
